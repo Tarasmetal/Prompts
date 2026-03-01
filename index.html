@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prompts Manager v3.8.7 — Документация</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+--bg:#0d0f1a;--bg2:#141729;--bg3:#1a1e35;
+--accent:#8E37D7;--accent2:#6B8DD6;--accent3:#2CD8D5;
+--text:#e0e0f0;--text2:#a0a0c0;--text3:#707090;
+--card:#181c33;--border:#2a2e4a;
+--grad:linear-gradient(135deg,#2CD8D5,#6B8DD6,#8E37D7);
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,-apple-system,sans-serif;line-height:1.7;overflow-x:hidden}
+.bg-particles{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden}
+.bg-particles circle{animation:float-particle linear infinite}
+@keyframes float-particle{0%{transform:translateY(100vh) scale(0);opacity:0}10%{opacity:1}90%{opacity:1}100%{transform:translateY(-10vh) scale(1);opacity:0}}
+.scroll-progress{position:fixed;top:0;left:0;height:3px;background:var(--grad);z-index:1000;transition:width .1s}
+nav{position:fixed;top:0;left:0;right:0;z-index:999;background:rgba(13,15,26,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 2rem;transition:transform .3s}
+nav.hidden{transform:translateY(-100%)}
+.nav-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:60px}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text)}
+.nav-logo svg{width:32px;height:32px}
+.nav-logo span{font-weight:700;font-size:1.1rem;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.nav-links{display:flex;gap:1.5rem;list-style:none}
+.nav-links a{color:var(--text2);text-decoration:none;font-size:.9rem;transition:color .3s;position:relative}
+.nav-links a:hover{color:var(--accent3)}
+.nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:2px;background:var(--grad);transition:width .3s}
+.nav-links a:hover::after{width:100%}
+.nav-burger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:5px}
+.nav-burger span{width:24px;height:2px;background:var(--text);transition:.3s}
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;position:relative;padding:2rem}
+.hero-content{position:relative;z-index:1;max-width:800px}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(142,55,215,.15);border:1px solid rgba(142,55,215,.3);border-radius:50px;padding:6px 18px;font-size:.85rem;color:var(--accent);margin-bottom:2rem;animation:fadeInDown .8s ease}
+.hero-badge .dot{width:8px;height:8px;border-radius:50%;background:var(--accent3);animation:pulse-dot 2s infinite}
+@keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.7)}}
+.hero h1{font-size:clamp(2.5rem,6vw,4.5rem);font-weight:800;line-height:1.1;margin-bottom:1.5rem;animation:fadeInUp .8s ease}
+.hero h1 .gradient{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero p{font-size:1.2rem;color:var(--text2);max-width:600px;margin:0 auto 2.5rem;animation:fadeInUp 1s ease}
+.hero-buttons{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;animation:fadeInUp 1.2s ease}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;border-radius:12px;font-size:1rem;font-weight:600;text-decoration:none;transition:all .3s;cursor:pointer;border:none}
+.btn-primary{background:var(--grad);color:#fff;box-shadow:0 4px 20px rgba(142,55,215,.4)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(142,55,215,.5)}
+.btn-secondary{background:transparent;color:var(--text);border:1px solid var(--border)}
+.btn-secondary:hover{border-color:var(--accent);background:rgba(142,55,215,.1)}
+.hero-visual{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:600px;opacity:.15;pointer-events:none}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeInDown{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+section{padding:6rem 2rem;position:relative;z-index:1}
+.container{max-width:1100px;margin:0 auto}
+.section-header{text-align:center;margin-bottom:4rem}
+.section-tag{display:inline-block;font-size:.8rem;font-weight:600;text-transform:uppercase;letter-spacing:2px;color:var(--accent3);margin-bottom:1rem}
+.section-header h2{font-size:clamp(2rem,4vw,3rem);font-weight:800;margin-bottom:1rem}
+.section-header h2 .gradient{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.section-header p{color:var(--text2);max-width:600px;margin:0 auto;font-size:1.05rem}
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.5rem}
+.feature-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:2rem;transition:all .4s;position:relative;overflow:hidden}
+.feature-card:hover{transform:translateY(-4px);border-color:var(--accent);box-shadow:0 8px 40px rgba(142,55,215,.15)}
+.feature-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--grad);opacity:0;transition:opacity .4s}
+.feature-card:hover::before{opacity:1}
+.feature-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:1.2rem;font-size:1.5rem}
+.feature-icon.purple{background:rgba(142,55,215,.15);color:#8E37D7}
+.feature-icon.blue{background:rgba(107,141,214,.15);color:#6B8DD6}
+.feature-icon.cyan{background:rgba(44,216,213,.15);color:#2CD8D5}
+.feature-card h3{font-size:1.2rem;margin-bottom:.6rem}
+.feature-card p{color:var(--text2);font-size:.95rem}
+.settings-block{display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:start}
+.settings-visual{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:1.5rem;position:relative;overflow:hidden}
+.settings-visual .window-bar{display:flex;gap:6px;margin-bottom:1rem;padding-bottom:.8rem;border-bottom:1px solid var(--border)}
+.settings-visual .window-dot{width:10px;height:10px;border-radius:50%}
+.settings-visual .window-dot.r{background:#ff5f57}.settings-visual .window-dot.y{background:#febc2e}.settings-visual .window-dot.g{background:#28c840}
+.setting-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(42,46,74,.5);animation:fadeInRow .5s ease backwards}
+.setting-row:last-child{border-bottom:none}
+.setting-row .checkbox{width:18px;height:18px;border-radius:4px;border:2px solid var(--accent);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.setting-row .checkbox.checked{background:var(--accent)}
+.setting-row .checkbox.checked::after{content:'✓';color:#fff;font-size:11px}
+.setting-row .folder-path{color:var(--text2);font-size:.85rem;font-family:'Consolas',monospace;background:var(--bg);padding:4px 10px;border-radius:6px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.settings-info{display:flex;flex-direction:column;gap:1.2rem}
+.settings-info .info-item{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.2rem 1.5rem}
+.settings-info .info-item h4{color:var(--accent3);margin-bottom:.4rem;font-size:1rem}
+.settings-info .info-item p{color:var(--text2);font-size:.9rem}
+@keyframes fadeInRow{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:translateX(0)}}
+.interface-showcase{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:2rem;margin-bottom:2rem;overflow:hidden}
+.interface-showcase .window-bar{display:flex;align-items:center;gap:8px;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid var(--border)}
+.interface-showcase .window-bar .dots{display:flex;gap:6px}
+.interface-showcase .window-bar .title{margin-left:12px;color:var(--text2);font-size:.85rem}
+.mock-ui{display:flex;flex-direction:column;gap:1rem}
+.mock-search{display:flex;gap:10px;align-items:center}
+.mock-search input{flex:1;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);font-size:.9rem;outline:none;transition:border-color .3s}
+.mock-search input:focus{border-color:var(--accent)}
+.mock-search .count{color:var(--text3);font-size:.85rem;white-space:nowrap}
+.mock-table{width:100%;border-collapse:collapse}
+.mock-table th{text-align:left;padding:8px 12px;color:var(--text3);font-size:.8rem;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--border)}
+.mock-table td{padding:10px 12px;border-bottom:1px solid rgba(42,46,74,.3);font-size:.9rem}
+.mock-table tr{transition:background .2s}
+.mock-table tr:hover{background:rgba(142,55,215,.05)}
+.mock-table .keys-badge{background:rgba(44,216,213,.12);color:var(--accent3);padding:2px 8px;border-radius:4px;font-family:monospace;font-size:.8rem}
+.mock-table .file-badge{color:var(--text3);font-size:.8rem}
+.mock-table .duplicate{color:#ff6b6b}
+.mock-buttons{display:flex;gap:8px;flex-wrap:wrap;padding-top:.5rem}
+.mock-btn{padding:8px 16px;border-radius:8px;font-size:.85rem;border:1px solid var(--border);background:var(--bg);color:var(--text);cursor:default;transition:all .3s;display:flex;align-items:center;gap:4px}
+.mock-btn:hover{border-color:var(--accent);background:rgba(142,55,215,.08)}
+.buttons-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem}
+.button-detail{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.5rem;transition:all .3s}
+.button-detail:hover{border-color:var(--accent2)}
+.button-detail .btn-icon{font-size:1.5rem;margin-bottom:.5rem}
+.button-detail h4{margin-bottom:.4rem}
+.button-detail p{color:var(--text2);font-size:.9rem}
+.button-detail .tag{display:inline-block;font-size:.75rem;padding:2px 8px;border-radius:4px;margin-top:.5rem}
+.button-detail .tag.multi{background:rgba(44,216,213,.12);color:var(--accent3)}
+.button-detail .tag.single{background:rgba(107,141,214,.12);color:var(--accent2)}
+.hotstring-demo{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:2rem;margin-top:2rem}
+.hotstring-flow{display:flex;align-items:center;justify-content:center;gap:1rem;flex-wrap:wrap;margin:1.5rem 0}
+.flow-step{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:1rem 1.5rem;text-align:center;min-width:160px;position:relative}
+.flow-step .step-num{position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;width:22px;height:22px;border-radius:50%;font-size:.75rem;display:flex;align-items:center;justify-content:center;font-weight:700}
+.flow-step .step-label{font-size:.8rem;color:var(--text3);margin-bottom:.3rem}
+.flow-step .step-value{font-family:monospace;color:var(--accent3);font-size:1rem}
+.flow-arrow{color:var(--accent);font-size:1.5rem;animation:arrow-pulse 1.5s infinite}
+@keyframes arrow-pulse{0%,100%{opacity:1;transform:translateX(0)}50%{opacity:.5;transform:translateX(4px)}}
+.gnr-block{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:2rem;margin-top:2rem}
+.gnr-block h3{margin-bottom:1rem}
+.code-block{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1rem 1.2rem;font-family:'Consolas','Fira Code',monospace;font-size:.9rem;overflow-x:auto;margin:.8rem 0;position:relative}
+.code-block .lang{position:absolute;top:6px;right:10px;font-size:.7rem;color:var(--text3);text-transform:uppercase}
+.code-block .kw{color:#c792ea}.code-block .str{color:#c3e88d}.code-block .cm{color:#546e7a}
+.examples-grid{display:grid;grid-template-columns:1fr 1fr;gap:2rem}
+.example-card{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:all .4s}
+.example-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.example-header{background:var(--grad);padding:1.5rem;position:relative;overflow:hidden}
+.example-header h3{color:#fff;font-size:1.2rem;position:relative;z-index:1}
+.example-header p{color:rgba(255,255,255,.8);font-size:.9rem;margin-top:.3rem;position:relative;z-index:1}
+.example-header .example-num{position:absolute;top:10px;right:15px;font-size:3rem;font-weight:900;color:rgba(255,255,255,.15)}
+.example-body{padding:1.5rem}
+.example-body .step{display:flex;gap:12px;margin-bottom:1rem;align-items:flex-start}
+.example-body .step-dot{width:24px;height:24px;border-radius:50%;background:rgba(142,55,215,.15);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;flex-shrink:0;margin-top:2px}
+.example-body .step p{color:var(--text2);font-size:.9rem}
+.example-body .step code{background:var(--bg);padding:2px 6px;border-radius:4px;font-size:.85rem;color:var(--accent3)}
+.github-flow{display:flex;flex-direction:column;gap:1rem;margin-top:2rem}
+.github-step{display:flex;gap:1.5rem;align-items:flex-start;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.5rem;transition:all .3s}
+.github-step:hover{border-color:var(--accent2)}
+.github-step .step-icon{width:48px;height:48px;border-radius:12px;background:rgba(107,141,214,.12);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0}
+.github-step h4{margin-bottom:.3rem}
+.github-step p{color:var(--text2);font-size:.9rem}
+.hotkeys-table{width:100%;border-collapse:collapse;margin-top:1.5rem}
+.hotkeys-table th{text-align:left;padding:10px 14px;color:var(--text3);font-size:.85rem;border-bottom:2px solid var(--border)}
+.hotkeys-table td{padding:10px 14px;border-bottom:1px solid rgba(42,46,74,.4)}
+.hotkeys-table kbd{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 10px;font-family:monospace;font-size:.85rem;color:var(--accent3);box-shadow:0 2px 0 var(--border)}
+footer{border-top:1px solid var(--border);padding:3rem 2rem;text-align:center;position:relative;z-index:1}
+footer p{color:var(--text3);font-size:.9rem}
+footer a{color:var(--accent);text-decoration:none}
+footer a:hover{text-decoration:underline}
+.footer-links{display:flex;justify-content:center;gap:2rem;margin-top:1rem}
+.reveal{opacity:0;transform:translateY(40px);transition:all .8s cubic-bezier(.16,1,.3,1)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-delay-1{transition-delay:.1s}
+.reveal-delay-2{transition-delay:.2s}
+.reveal-delay-3{transition-delay:.3s}
+@media(max-width:900px){
+.settings-block,.examples-grid{grid-template-columns:1fr}
+.nav-links{display:none;position:absolute;top:60px;left:0;right:0;background:var(--bg2);flex-direction:column;padding:1rem 2rem;border-bottom:1px solid var(--border)}
+.nav-links.open{display:flex}
+.nav-burger{display:flex}
+}
+@media(max-width:600px){
+section{padding:4rem 1rem}
+.features-grid,.buttons-grid{grid-template-columns:1fr}
+.hotstring-flow{flex-direction:column}
+.flow-arrow{transform:rotate(90deg)}
+}
+.hero-glow{position:absolute;width:500px;height:500px;border-radius:50%;filter:blur(120px);opacity:.2;pointer-events:none}
+.hero-glow.g1{background:#8E37D7;top:-100px;right:-100px;animation:glow-move 8s ease-in-out infinite alternate}
+.hero-glow.g2{background:#2CD8D5;bottom:-100px;left:-100px;animation:glow-move 10s ease-in-out infinite alternate-reverse}
+@keyframes glow-move{0%{transform:translate(0,0)}100%{transform:translate(40px,30px)}}
+.tooltip-anim{position:absolute;background:#FFFFE1;color:#333;padding:8px 12px;border-radius:6px;font-size:.8rem;border:1px solid #ddd;box-shadow:0 4px 12px rgba(0,0,0,.2);opacity:0;pointer-events:none;max-width:250px;animation:tooltip-show 3s ease infinite}
+@keyframes tooltip-show{0%,100%{opacity:0;transform:translateY(5px)}30%,70%{opacity:1;transform:translateY(0)}}
+.typing{display:inline-block;overflow:hidden;white-space:nowrap;border-right:2px solid var(--accent);animation:typing-blink .8s step-end infinite}
+@keyframes typing-blink{50%{border-color:transparent}}
+.pulse-ring{animation:pulse-ring 2.5s cubic-bezier(.215,.61,.355,1) infinite}
+@keyframes pulse-ring{0%{transform:scale(.5);opacity:.8}100%{transform:scale(1.8);opacity:0}}
+</style>
+</head>
+<body>
+
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<svg class="bg-particles" xmlns="http://www.w3.org/2000/svg">
+<circle cx="10%" cy="0" r="2" fill="#8E37D7" opacity=".4" style="animation-duration:12s;animation-delay:0s"/>
+<circle cx="25%" cy="0" r="1.5" fill="#6B8DD6" opacity=".3" style="animation-duration:18s;animation-delay:2s"/>
+<circle cx="40%" cy="0" r="2.5" fill="#2CD8D5" opacity=".3" style="animation-duration:15s;animation-delay:4s"/>
+<circle cx="55%" cy="0" r="1" fill="#8E37D7" opacity=".5" style="animation-duration:20s;animation-delay:1s"/>
+<circle cx="70%" cy="0" r="2" fill="#6B8DD6" opacity=".3" style="animation-duration:14s;animation-delay:6s"/>
+<circle cx="85%" cy="0" r="1.5" fill="#2CD8D5" opacity=".4" style="animation-duration:16s;animation-delay:3s"/>
+<circle cx="95%" cy="0" r="1" fill="#8E37D7" opacity=".3" style="animation-duration:22s;animation-delay:5s"/>
+<circle cx="5%" cy="0" r="1.8" fill="#6B8DD6" opacity=".25" style="animation-duration:19s;animation-delay:7s"/>
+<circle cx="50%" cy="0" r="2.2" fill="#2CD8D5" opacity=".2" style="animation-duration:17s;animation-delay:8s"/>
+<circle cx="78%" cy="0" r="1.3" fill="#8E37D7" opacity=".35" style="animation-duration:21s;animation-delay:10s"/>
+</svg>
+
+<!-- Navigation -->
+<nav id="navbar">
+<div class="nav-inner">
+<a href="#" class="nav-logo">
+<svg viewBox="0 0 593 593" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="navGrad" x1="0.5" y1="0" x2="0.5" y2="1"><stop offset="0" stop-color="#2CD8D5"/><stop offset=".5" stop-color="#6B8DD6"/><stop offset="1" stop-color="#8E37D7"/></linearGradient></defs><path d="M448 224C448 100.288 347.712 0 224 0C100.288 0 0 100.288 0 224C0 347.712 100.288 448 224 448C347.712 448 448 347.712 448 224Z" transform="matrix(.988 -.156 .156 .988 40 102)" fill="url(#navGrad)"/></svg>
+<span>Prompts Manager</span>
+</a>
+<ul class="nav-links" id="navLinks">
+<li><a href="#features">Возможности</a></li>
+<li><a href="#settings">Настройки</a></li>
+<li><a href="#interface">Интерфейс</a></li>
+<li><a href="#hotstrings">Хотстринги</a></li>
+<li><a href="#github">GitHub</a></li>
+<li><a href="#examples">Примеры</a></li>
+</ul>
+<button class="nav-burger" id="navBurger" aria-label="Меню"><span></span><span></span><span></span></button>
+</div>
+</nav>
+
+<!-- Hero -->
+<section class="hero" id="hero">
+<div class="hero-glow g1"></div>
+<div class="hero-glow g2"></div>
+<svg class="hero-visual" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
+<circle cx="300" cy="300" r="200" fill="none" stroke="#8E37D7" stroke-width=".5" opacity=".3"><animateTransform attributeName="transform" type="rotate" from="0 300 300" to="360 300 300" dur="30s" repeatCount="indefinite"/></circle>
+<circle cx="300" cy="300" r="250" fill="none" stroke="#6B8DD6" stroke-width=".3" opacity=".2" stroke-dasharray="10 20"><animateTransform attributeName="transform" type="rotate" from="360 300 300" to="0 300 300" dur="40s" repeatCount="indefinite"/></circle>
+<circle cx="300" cy="300" r="150" fill="none" stroke="#2CD8D5" stroke-width=".5" opacity=".25" stroke-dasharray="5 15"><animateTransform attributeName="transform" type="rotate" from="0 300 300" to="360 300 300" dur="20s" repeatCount="indefinite"/></circle>
+<circle cx="300" cy="100" r="4" fill="#2CD8D5" opacity=".8"><animateTransform attributeName="transform" type="rotate" from="0 300 300" to="360 300 300" dur="8s" repeatCount="indefinite"/></circle>
+<circle cx="300" cy="50" r="3" fill="#8E37D7" opacity=".6"><animateTransform attributeName="transform" type="rotate" from="0 300 300" to="-360 300 300" dur="12s" repeatCount="indefinite"/></circle>
+<circle cx="500" cy="300" r="3" fill="#6B8DD6" opacity=".7"><animateTransform attributeName="transform" type="rotate" from="0 300 300" to="360 300 300" dur="15s" repeatCount="indefinite"/></circle>
+</svg>
+<div class="hero-content">
+<div class="hero-badge"><span class="dot"></span> AutoHotkey v2 · Open Source</div>
+<h1>Ваши промпты<br>всегда <span class="gradient">под рукой</span></h1>
+<p>Prompts Manager — продвинутый менеджер текстовых шаблонов. Храните, редактируйте и мгновенно вставляйте промпты в любое окно одним нажатием.</p>
+<div class="hero-buttons">
+<a href="#features" class="btn btn-primary">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+Узнать больше
+</a>
+<a href="https://github.com/Tarasmetal/Prompts" target="_blank" class="btn btn-secondary">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+GitHub
+</a>
+</div>
+</div>
+</section>
+
+<!-- Features -->
+<section id="features">
+<div class="container">
+<div class="section-header reveal">
+<span class="section-tag">Возможности</span>
+<h2>Всё что нужно для <span class="gradient">работы с промптами</span></h2>
+<p>Мощный набор инструментов для управления текстовыми шаблонами</p>
+</div>
+<div class="features-grid">
+<div class="feature-card reveal">
+<div class="feature-icon cyan">⚡</div>
+<h3>Мгновенная вставка</h3>
+<p>Введите аббревиатуру — и промпт мгновенно вставится в любое активное окно через систему хотстрингов.</p>
+</div>
+<div class="feature-card reveal reveal-delay-1">
+<div class="feature-icon purple">📁</div>
+<h3>Мульти-папки</h3>
+<p>До 5 папок с CSV-файлами промптов. Включайте и отключайте коллекции чекбоксами в настройках.</p>
+</div>
+<div class="feature-card reveal reveal-delay-2">
+<div class="feature-icon blue">🔍</div>
+<h3>Умный поиск</h3>
+<p>Мгновенный поиск по названию, аббревиатуре и тексту промпта с подсветкой дубликатов.</p>
+</div>
+<div class="feature-card reveal reveal-delay-3">
+<div class="feature-icon cyan">🔄</div>
+<h3>GitHub синхронизация</h3>
+<p>Скачивайте коллекции промптов напрямую из GitHub-репозиториев одной кнопкой.</p>
+</div>
+<div class="feature-card reveal">
+<div class="feature-icon purple">🎲</div>
+<h3>Случайные фразы</h3>
+<p>Префикс <code>gnr-msg:</code> выбирает случайную фразу из списка при каждой вставке.</p>
+</div>
+<div class="feature-card reveal reveal-delay-1">
+<div class="feature-icon blue">💾</div>
+<h3>CSV формат</h3>
+<p>Простой и открытый формат хранения: <code>"название","ключ","промпт"</code>. Легко редактировать вручную.</p>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Settings -->
+<section id="settings" style="background:var(--bg2)">
+<div class="container">
+<div class="section-header reveal">
+<span class="section-tag">Первый запуск</span>
+<h2>Окно <span class="gradient">настроек</span></h2>
+<p>При первом запуске откроется окно настроек — укажите папки с промптами</p>
+</div>
+<div class="settings-block">
+<div class="settings-visual reveal">
+<div class="window-bar">
+<div class="window-dot r"></div><div class="window-dot y"></div><div class="window-dot g"></div>
+</div>
+<div class="setting-row" style="animation-delay:.1s">
+<div class="checkbox checked"></div>
+<span class="folder-path">C:\Users\Taras\Prompts\main</span>
+</div>
+<div class="setting-row" style="animation-delay:.2s">
+<div class="checkbox checked"></div>
+<span class="folder-path">C:\Users\Taras\Prompts\work</span>
+</div>
+<div class="setting-row" style="animation-delay:.3s">
+<div class="checkbox"></div>
+<span class="folder-path">C:\Users\Taras\Prompts\dev</span>
+</div>
+<div class="setting-row" style="animation-delay:.4s">
+<div class="checkbox"></div>
+<span class="folder-path">— пусто —</span>
+</div>
+<div class="setting-row" style="animation-delay:.5s">
+<div class="checkbox"></div>
+<span class="folder-path">— пусто —</span>
+</div>
+</div>
+<div class="settings-info reveal">
+<div class="info-item">
+<h4>📁 Папки с промптами</h4>
+<p>Укажите до 5 папок, содержащих CSV-файлы. Каждая папка — отдельная коллекция промптов. Чекбокс включает/отключает загрузку папки.</p>
+</div>
+<div class="info-item">
+<h4>🔄 GitHub синхронизация</h4>
+<p>Укажите URL GitHub-репозитория для автоматической загрузки и обновления коллекций промптов.</p>
+</div>
+<div class="info-item">
+<h4>⌨️ Горячие клавиши</h4>
+<p>Настройте хоткеи для открытия окна и вставки промптов. Поддержка раскладко-независимых виртуальных кодов клавиш.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Interface -->
+<section id="interface">
+<div class="container">
+<div class="section-header reveal">
+<span class="section-tag">Интерфейс</span>
+<h2>Удобное <span class="gradient">управление</span></h2>
+<p>Интуитивный интерфейс с поиском, таблицей и набором кнопок</p>
+</div>
+<div class="interface-showcase reveal">
+<div class="window-bar">
+<div class="dots"><div class="window-dot r"></div><div class="window-dot y"></div><div class="window-dot g"></div></div>
+<span class="title">Prompts Manager v3.8.7 — 42 промпта</span>
+</div>
+<div class="mock-ui">
+<div class="mock-search">
+<input type="text" placeholder="🔍 Поиск по промптам..." readonly>
+<span class="count">42 / 42</span>
+</div>
+<table class="mock-table">
+<thead><tr><th>Название</th><th>Ключ</th><th>Файл</th></tr></thead>
+<tbody>
+<tr><td>Переводчик</td><td><span class="keys-badge">tr</span></td><td class="file-badge">main.csv</td></tr>
+<tr><td>Код-ревью</td><td><span class="keys-badge">cr</span></td><td class="file-badge">dev.csv</td></tr>
+<tr><td class="duplicate">Приветствие</td><td><span class="keys-badge">hi</span></td><td class="file-badge">work.csv</td></tr>
+<tr><td>SEO-оптимизация</td><td><span class="keys-badge">seo</span></td><td class="file-badge">main.csv</td></tr>
+</tbody>
+</table>
+<div class="mock-buttons">
+<div class="mock-btn">✏️ Edit</div>
+<div class="mock-btn">➕ Add New</div>
+<div class="mock-btn">📋 Duplicate</div>
+<div class="mock-btn">📦 Move</div>
+<div class="mock-btn">🗑️ Delete</div>
+<div class="mock-btn">📤 Export</div>
+<div class="mock-btn">💾 Save</div>
+<div class="mock-btn">🔄 Update</div>
+<div class="mock-btn">📂 Backup</div>
+<div class="mock-btn">⚙️ Settings</div>
+</div>
+</div>
+</div>
+<div class="buttons-grid">
+<div class="button-detail reveal">
+<div class="btn-icon">✏️</div>
+<h4>Edit</h4>
+<p>Открывает выбранный промпт для редактирования названия, аббревиатуры и текста.</p>
+<span class="tag single">Один промпт</span>
+</div>
+<div class="button-detail reveal">
+<div class="btn-icon">📦</div>
+<h4>Move</h4>
+<p>Перемещает выделенные промпты в другой CSV-файл. Коллекция остаётся прежней, но промпты переносятся в нужное место.</p>
+<span class="tag multi">Множественный выбор</span>
+</div>
+<div class="button-detail reveal">
+<div class="btn-icon">📤</div>
+<h4>Export</h4>
+<p>Экспортирует выбранные промпты в новый CSV-файл для резервного копирования или обмена.</p>
+<span class="tag multi">Множественный выбор</span>
+</div>
+<div class="button-detail reveal">
+<div class="btn-icon">🗑️</div>
+<h4>Delete</h4>
+<p>Удаляет выбранные промпты из коллекции с подтверждением действия.</p>
+<span class="tag multi">Множественный выбор</span>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Hotstrings -->
+<section id="hotstrings" style="background:var(--bg2)">
+<div class="container">
+<div class="section-header reveal">
+<span class="section-tag">Хотстринги</span>
+<h2>Вставка по <span class="gradient">аббревиатуре</span></h2>
+<p>Введите сокращение в любом окне — промпт вставится автоматически</p>
+</div>
+<div class="hotstring-demo reveal">
+<p style="color:var(--text2);text-align:center;margin-bottom:1rem">Как это работает:</p>
+<div class="hotstring-flow">
+<div class="flow-step">
+<div class="step-num">1</div>
+<div class="step-label">Вы вводите</div>
+<div class="step-value">:tr<span class="typing"> </span></div>
+</div>
+<div class="flow-arrow">→</div>
+<div class="flow-step">
+<div class="step-num">2</div>
+<div class="step-label">Менеджер находит</div>
+<div class="step-value">keys = "tr"</div>
+</div>
+<div class="flow-arrow">→</div>
+<div class="flow-step">
+<div class="step-num">3</div>
+<div class="step-label">Вставляется промпт</div>
+<div class="step-value">"Переведи текст..."</div>
+</div>
+</div>
+<p style="color:var(--text3);text-align:center;font-size:.9rem">Промпт отправляется через буфер обмена в активное окно</p>
+</div>
+
+<div class="gnr-block reveal">
+<h3>🎲 Случайные фразы — <code style="color:var(--accent3)">gnr-msg:</code></h3>
+<p style="color:var(--text2);margin-bottom:1rem">Если текст промпта начинается с <code style="color:var(--accent3)">gnr-msg:</code>, при каждой вставке будет выбрана случайная фраза из списка через запятую.</p>
+<div class="code-block">
+<span class="lang">CSV</span>
+<span class="str">"Приветствие"</span>,<span class="str">"hi"</span>,<span class="str">"gnr-msg:Привет!,Здравствуйте!,Добрый день!,Хей!"</span>
+</div>
+<p style="color:var(--text3);font-size:.9rem;margin-top:.8rem">Каждый раз при вводе <kbd style="background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:2px 6px;font-size:.85rem;color:var(--accent3)">:hi</kbd> будет вставлена одна случайная фраза из списка.</p>
+</div>
+</div>
+</section>
+
+<!-- GitHub -->
+<section id="github">
+<div class="container">
+<div class="section-header reveal">
+<span class="section-tag">Синхронизация</span>
+<h2>Загрузка из <span class="gradient">GitHub</span></h2>
+<p>Скачивайте готовые коллекции промптов из репозиториев</p>
+</div>
+<div class="github-flow">
+<div class="github-step reveal">
+<div class="step-icon">⚙️</div>
+<div><h4>1. Укажите репозиторий</h4><p>В настройках введите URL GitHub-репозитория с CSV-файлами промптов.</p></div>
+</div>
+<div class="github-step reveal reveal-delay-1">
+<div class="step-icon">🔄</div>
+<div><h4>2. Нажмите Update</h4><p>Скрипт обращается к GitHub API, получает список файлов и скачивает CSV-файлы в указанную папку.</p></div>
+</div>
+<div class="github-step reveal reveal-delay-2">
+<div class="step-icon">✅</div>
+<div><h4>3. Промпты готовы</h4><p>Коллекция автоматически обновляется, хотстринги перерегистрируются. Можно работать!</p></div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Examples -->
+<section id="examples" style="background:var(--bg2)">
+<div class="container">
+<div class="section-header reveal">
+<span class="section-tag">Примеры</span>
+<h2>Как это <span class="gradient">используют</span></h2>
+<p>Два сценария использования Prompts Manager в реальной работе</p>
+</div>
+<div class="examples-grid">
+<div class="example-card reveal">
+<div class="example-header">
+<span class="example-num">01</span>
+<h3>Копирайтер</h3>
+<p>Ежедневная работа с текстами</p>
+</div>
+<div class="example-body">
+<div class="step"><div class="step-dot">1</div><p>Создаёт промпты для типовых задач: SEO-тексты, рерайт, заголовки</p></div>
+<div class="step"><div class="step-dot">2</div><p>Назначает аббревиатуры: <code>:seo</code>, <code>:rw</code>, <code>:ttl</code></p></div>
+<div class="step"><div class="step-dot">3</div><p>В ChatGPT вводит <code>:seo</code> — промпт вставляется мгновенно</p></div>
+<div class="step"><div class="step-dot">4</div><p>Использует <code>gnr-msg:</code> для случайных приветствий клиентам</p></div>
+</div>
+</div>
+<div class="example-card reveal reveal-delay-1">
+<div class="example-header">
+<span class="example-num">02</span>
+<h3>Разработчик</h3>
+<p>Код-ревью и документация</p>
+</div>
+<div class="example-body">
+<div class="step"><div class="step-dot">1</div><p>Хранит промпты для код-ревью, рефакторинга, написания тестов</p></div>
+<div class="step"><div class="step-dot">2</div><p>Синхронизирует коллекцию команды через GitHub</p></div>
+<div class="step"><div class="step-dot">3</div><p>В IDE вводит <code>:cr</code> — получает шаблон для code review</p></div>
+<div class="step"><div class="step-dot">4</div><p>Кнопкой Move распределяет промпты по тематическим файлам</p></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Hotkeys -->
+<section id="hotkeys">
+<div class="container">
+<div class="section-header reveal">
+<span class="section-tag">Управление</span>
+<h2>Горячие <span class="gradient">клавиши</span></h2>
+<p>Настраиваемые хоткеи с поддержкой раскладко-независимых виртуальных кодов</p>
+</div>
+<div class="reveal">
+<table class="hotkeys-table">
+<thead><tr><th>Действие</th><th>Клавиша по умолчанию</th><th>Описание</th></tr></thead>
+<tbody>
+<tr><td>Открыть менеджер</td><td><kbd>Ctrl + Shift + P</kbd></td><td style="color:var(--text2)">Показать/скрыть главное окно</td></tr>
+<tr><td>Вставить промпт</td><td><kbd>:аббревиатура</kbd></td><td style="color:var(--text2)">Ввод аббревиатуры в любом окне</td></tr>
+<tr><td>Быстрая вставка</td><td><kbd>Enter / Double-click</kbd></td><td style="color:var(--text2)">Вставка выбранного промпта из списка</td></tr>
+<tr><td>Настройки</td><td><kbd>Кнопка Settings</kbd></td><td style="color:var(--text2)">Открыть окно настроек папок и хоткеев</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+
+<!-- Footer -->
+<footer>
+<p>Prompts Manager v3.8.7 — создано <a href="http://vk.com/tarasmetal" target="_blank">Taras Umanskiy</a></p>
+<div class="footer-links">
+<a href="http://vk.com/tarasmetal" target="_blank">VK</a>
+<a href="https://github.com/Tarasmetal/Prompts" target="_blank">GitHub</a>
+<a href="https://vk.com/Tarasmetal" target="_blank">Donation</a>
+</div>
+<p style="margin-top:1rem;font-size:.8rem;color:var(--text3)">AutoHotkey v2 · Open Source · 2024–2026</p>
+</footer>
+
+<script>
+// Scroll progress bar
+window.addEventListener('scroll',()=>{
+const s=document.documentElement,p=(s.scrollTop/(s.scrollHeight-s.clientHeight))*100;
+document.getElementById('scrollProgress').style.width=p+'%';
+});
+
+// Navbar hide on scroll
+let lastY=0;
+window.addEventListener('scroll',()=>{
+const y=window.scrollY,nav=document.getElementById('navbar');
+nav.classList.toggle('hidden',y>lastY&&y>80);
+lastY=y;
+});
+
+// Burger menu
+document.getElementById('navBurger').addEventListener('click',()=>{
+document.getElementById('navLinks').classList.toggle('open');
+});
+
+// Close mobile menu on link click
+document.querySelectorAll('.nav-links a').forEach(a=>{
+a.addEventListener('click',()=>document.getElementById('navLinks').classList.remove('open'));
+});
+
+// Scroll reveal
+const obs=new IntersectionObserver((entries)=>{
+entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target)}});
+},{threshold:.15});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>
